@@ -115,9 +115,25 @@ function loadWeather() {
     cities.forEach(city => {
         const card = document.createElement('div');
         card.className = 'city-card';
+
+        const header = document.createElement('div');
+
         const title = document.createElement('h3');
         title.textContent = city;
-        card.appendChild(title);
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Удалить';
+        delBtn.addEventListener('click', () => {
+            logger('Удаление города:', city);
+            cities = cities.filter(c => c !== city);
+            saveState();
+            loadWeather();
+        });
+
+        header.appendChild(title);
+        header.appendChild(delBtn);
+        card.appendChild(header);
+
         const loading = document.createElement('p');
         loading.textContent = 'Загрузка...';
         card.appendChild(loading);
@@ -147,7 +163,8 @@ function loadWeather() {
 }
 
 async function fetchWeather(city) {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=ru&appid=${API_KEY}`;
+    const url =
+        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=ru&appid=${API_KEY}`;
     const res = await fetch(url);
     if (res.status === 401) throw new Error('401 Unauthorized - ключ не активен');
     if (!res.ok) throw new Error('Ошибка запроса');
@@ -155,7 +172,8 @@ async function fetchWeather(city) {
 }
 
 async function fetchWeatherByCoords(lat, lon) {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
+    const url =
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
     const res = await fetch(url);
     if (res.status === 401) throw new Error('401 Unauthorized - ключ не активен');
     if (!res.ok) throw new Error('Ошибка запроса');
